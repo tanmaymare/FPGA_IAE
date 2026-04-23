@@ -43,6 +43,7 @@
                 linear-gradient(90deg, rgba(88, 166, 255, 0.05) 1px, transparent 1px);
             background-size: 40px 40px;
             animation: pulse-grid 4s infinite alternate ease-in-out;
+            overflow: hidden;
         }
 
         .fpga-bg::after {
@@ -54,6 +55,32 @@
                 radial-gradient(circle at 85% 75%, rgba(88, 166, 255, 0.1) 0%, transparent 20%),
                 radial-gradient(circle at 50% 50%, rgba(88, 166, 255, 0.05) 0%, transparent 30%);
             animation: pulse-nodes 3s infinite alternate ease-in-out;
+        }
+
+        /* NEW ANIMATION: Glowing Data Packets Flowing on the Grid */
+        .data-packet {
+            position: absolute;
+            background: var(--accent-color);
+            box-shadow: 0 0 8px 2px rgba(88, 166, 255, 0.8);
+            border-radius: 50%;
+            pointer-events: none; /* Let clicks pass through */
+        }
+        
+        .packet-h { width: 6px; height: 2px; animation: move-h linear infinite; }
+        .packet-v { width: 2px; height: 6px; animation: move-v linear infinite; }
+
+        @keyframes move-h {
+            0% { transform: translateX(-5vw); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(105vw); opacity: 0; }
+        }
+        
+        @keyframes move-v {
+            0% { transform: translateY(-5vh); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(105vh); opacity: 0; }
         }
 
         @keyframes pulse-grid {
@@ -148,6 +175,22 @@
             font-size: 1.2rem;
             max-width: 800px;
             margin-bottom: 2rem;
+            min-height: 3.6rem; /* Keep height stable during typing */
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2rem;
+            background-color: var(--accent-color);
+            animation: blink 1s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 5px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
 
         .btn {
@@ -195,12 +238,38 @@
             padding: 2rem;
             border-radius: 10px;
             border: 1px solid var(--border-color);
-            transition: transform 0.3s, border-color 0.3s;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden; /* For the scanner effect */
+        }
+
+        /* NEW ANIMATION: Fault Scanner Hover Effect */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(88, 166, 255, 0.15), transparent);
+            transform: skewX(-20deg);
+            transition: all 0.5s ease;
+            pointer-events: none;
+        }
+
+        .card:hover::before {
+            animation: scan-card 1.2s ease-in-out;
+        }
+
+        @keyframes scan-card {
+            0% { left: -150%; }
+            100% { left: 200%; }
         }
 
         .card:hover {
             transform: translateY(-5px);
             border-color: var(--accent-color);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
         }
 
         /* Lists and Teams */
@@ -218,6 +287,14 @@
             border-radius: 20px;
             border: 1px solid var(--border-color);
             font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .team-list li:hover {
+            background-color: rgba(88, 166, 255, 0.1);
+            border-color: var(--accent-color);
+            color: #fff;
+            transform: scale(1.05);
         }
 
         .team-category {
@@ -251,6 +328,7 @@
         .form-control:focus {
             outline: none;
             border-color: var(--accent-color);
+            box-shadow: 0 0 8px rgba(88, 166, 255, 0.3);
         }
 
         textarea.form-control {
@@ -314,7 +392,7 @@
 </head>
 <body>
 
-    <div class="fpga-bg"></div>
+    <div class="fpga-bg" id="grid-background"></div>
 
     <nav>
         <div class="logo">OpenGrid <span>FPGA</span></div>
@@ -330,7 +408,7 @@
 
     <section id="hero" class="hidden">
         <h1>FPGA-Based Real-Time Fault Detection and Protection System</h1>
-        <p class="subtitle">Bridging the gap between digital logic and analog realities. A high-speed, transparent alternative to proprietary industrial relays for Power Grid Applications.</p>
+        <p class="subtitle"><span id="typing-text"></span><span class="cursor"></span></p>
         <div>
             <a href="#about" class="btn">Explore the Project</a>
             <a href="#funding" class="btn btn-outline">Support Us</a>
@@ -441,11 +519,11 @@
     </section>
 
     <footer>
-        <p>&copy; 2026 OpenGrid FPGA Project.OpenGrid FPGA</p>
+        <p>&copy; 2026 OpenGrid FPGA Project. OpenGrid FPGA.</p>
     </footer>
 
     <script>
-        // Intersection Observer for Scroll Animations
+        // --- 1. Scroll Animations ---
         const observerOptions = {
             root: null,
             rootMargin: '0px',
@@ -462,6 +540,60 @@
 
         const hiddenElements = document.querySelectorAll('.hidden');
         hiddenElements.forEach((el) => observer.observe(el));
+
+        // --- 2. Typing Effect for Subtitle ---
+        const textToType = "Bridging the gap between digital logic and analog realities. A high-speed, transparent alternative to proprietary industrial relays for Power Grid Applications.";
+        const typingElement = document.getElementById('typing-text');
+        let typeIndex = 0;
+
+        function typeWriter() {
+            if (typeIndex < textToType.length) {
+                typingElement.innerHTML += textToType.charAt(typeIndex);
+                typeIndex++;
+                setTimeout(typeWriter, 35); // Adjust typing speed here
+            }
+        }
+        
+        // Start typing a bit after page load
+        setTimeout(typeWriter, 500);
+
+
+        // --- 3. Dynamic Data Packets on Background Grid ---
+        const bgContainer = document.getElementById('grid-background');
+        const numPackets = 25; // How many packets flow at once
+
+        for (let i = 0; i < numPackets; i++) {
+            createPacket();
+        }
+
+        function createPacket() {
+            const packet = document.createElement('div');
+            packet.classList.add('data-packet');
+            
+            // Randomly choose horizontal or vertical flow
+            const isHorizontal = Math.random() > 0.5;
+            
+            // To make it look like it's on a grid line, we snap it to multiples of the grid size (approx 40px)
+            // Using percentages: 40px is roughly 4% of a 1000px screen. We will use a loose percentage grid.
+            const gridLineSnap = Math.floor(Math.random() * 25) * 4; 
+
+            if (isHorizontal) {
+                packet.classList.add('packet-h');
+                packet.style.top = `${gridLineSnap}vh`;
+                // Random duration between 3s and 7s
+                packet.style.animationDuration = `${Math.random() * 4 + 3}s`; 
+            } else {
+                packet.classList.add('packet-v');
+                packet.style.left = `${gridLineSnap}vw`;
+                // Random duration between 3s and 7s
+                packet.style.animationDuration = `${Math.random() * 4 + 3}s`;
+            }
+
+            // Random delay so they don't all start at once
+            packet.style.animationDelay = `${Math.random() * 5}s`;
+            
+            bgContainer.appendChild(packet);
+        }
     </script>
 </body>
 </html>
