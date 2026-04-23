@@ -27,6 +27,43 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Pulsing FPGA Background Animation */
+        .fpga-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background-image: 
+                linear-gradient(rgba(88, 166, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(88, 166, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: pulse-grid 4s infinite alternate ease-in-out;
+        }
+
+        .fpga-bg::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(circle at 15% 25%, rgba(88, 166, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 85% 75%, rgba(88, 166, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(88, 166, 255, 0.05) 0%, transparent 30%);
+            animation: pulse-nodes 3s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulse-grid {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes pulse-nodes {
+            0% { opacity: 0.4; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1.05); }
         }
 
         /* Navigation */
@@ -42,6 +79,7 @@
             align-items: center;
             z-index: 1000;
             border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
         }
 
         .logo {
@@ -57,7 +95,7 @@
         nav ul {
             list-style: none;
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
         nav ul li a {
@@ -65,6 +103,7 @@
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s;
+            font-size: 0.9rem;
         }
 
         nav ul li a:hover {
@@ -73,7 +112,7 @@
 
         /* Sections */
         section {
-            padding: 100px 10%;
+            padding: 120px 10% 80px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -120,11 +159,26 @@
             font-weight: bold;
             border-radius: 5px;
             transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
         }
 
         .btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 4px 15px rgba(88, 166, 255, 0.4);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+            margin-left: 10px;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--accent-color);
+            color: #000;
         }
 
         /* Grid Layouts */
@@ -136,7 +190,8 @@
         }
 
         .card {
-            background-color: var(--card-bg);
+            background-color: rgba(22, 27, 34, 0.8);
+            backdrop-filter: blur(5px);
             padding: 2rem;
             border-radius: 10px;
             border: 1px solid var(--border-color);
@@ -144,10 +199,11 @@
         }
 
         .card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-5px);
             border-color: var(--accent-color);
         }
 
+        /* Lists and Teams */
         .team-list {
             display: flex;
             flex-wrap: wrap;
@@ -157,7 +213,7 @@
         }
 
         .team-list li {
-            background-color: var(--card-bg);
+            background-color: rgba(22, 27, 34, 0.8);
             padding: 8px 16px;
             border-radius: 20px;
             border: 1px solid var(--border-color);
@@ -170,12 +226,44 @@
             color: var(--accent-color);
         }
 
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-heading);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
         /* Scroll Animation Classes */
         .hidden {
             opacity: 0;
             filter: blur(5px);
-            transform: translateY(50px);
-            transition: all 1s ease;
+            transform: translateY(40px);
+            transition: all 0.8s ease-out;
         }
 
         .show {
@@ -191,24 +279,62 @@
             background-color: var(--card-bg);
             border-top: 1px solid var(--border-color);
         }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                padding: 1rem;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+
+            h1 { font-size: 2.2rem; }
+            h2 { font-size: 1.8rem; }
+            
+            section {
+                padding: 140px 5% 60px;
+                min-height: auto;
+            }
+
+            .subtitle { font-size: 1rem; }
+            
+            .btn { width: 100%; margin-bottom: 10px; margin-left: 0; text-align: center;}
+            
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
+
+    <div class="fpga-bg"></div>
 
     <nav>
         <div class="logo">OpenGrid <span>FPGA</span></div>
         <ul>
             <li><a href="#hero">Home</a></li>
             <li><a href="#about">About</a></li>
-            <li><a href="#market">Strategy</a></li>
+            <li><a href="#pitch">Pitch Deck</a></li>
             <li><a href="#team">Team</a></li>
+            <li><a href="#funding">Funding</a></li>
+            <li><a href="#contact">Contact</a></li>
         </ul>
     </nav>
 
     <section id="hero" class="hidden">
-        <h1>FPGA-Based Real-Time Fault Detection and Protection System for Power Grid Applications </h1>
-        <p class="subtitle">Bridging the gap between digital logic and analog realities. A high-speed, transparent alternative to proprietary industrial relays.</p>
-        <a href="#about" class="btn">Explore the Project</a>
+        <h1>FPGA-Based Real-Time Fault Detection and Protection System</h1>
+        <p class="subtitle">Bridging the gap between digital logic and analog realities. A high-speed, transparent alternative to proprietary industrial relays for Power Grid Applications.</p>
+        <div>
+            <a href="#about" class="btn">Explore the Project</a>
+            <a href="#funding" class="btn btn-outline">Support Us</a>
+        </div>
     </section>
 
     <section id="about" class="hidden">
@@ -231,23 +357,39 @@
         </div>
     </section>
 
-    <section id="market" class="hidden">
-        <h2>The Market Gap & Strategy</h2>
-        <p>Gap analysis revealed a lack of publicly available research due to the proprietary nature of FPGA solutions in industry settings. This highlighted a significant gap in the market due to no connection between textbook theory and proprietary tech developed by companies[cite: 28].</p>
+    <section id="pitch" class="hidden">
+        <h2>Pitch Deck Overview</h2>
+        <p>Strategic analysis mapping out our path from academic project to industrial application.</p>
         
-        <h3 style="margin-top: 2rem;">Targeted Sectors </h3>
         <div class="grid-container">
             <div class="card">
-                <h3>Academic Research Labs</h3>
-                <p>Looking for open-source FPGA testing frameworks.</p>
+                <h3>Problem & Solution</h3>
+                <p><strong>Problem:</strong> Lack of publicly available research due to the proprietary nature of FPGA solutions in industry settings[cite: 28].</p>
+                <p><strong>Solution:</strong> We provide an open-source, highly customizable baseline design utilizing hardware-in-the-loop testing, breaking the barrier of closed-source industry standards.</p>
             </div>
             <div class="card">
-                <h3>Industrial Automation</h3>
-                <p>Factories requiring rapid motor/equipment protection.</p>
+                <h3>Market & Adoption</h3>
+                <p><strong>Adoption:</strong> Targets academic research labs needing testing frameworks, expanding to factories needing rapid motor protection, and eventually smart grid developers.</p>
+                <p><strong>Competition:</strong> Unlike proprietary "black-box" relays, our solution offers transparency, configurability, and lower entry costs.</p>
             </div>
-            <div class="card">
-                <h3>Smart Grid Infrastructure</h3>
-                <p>Developers and Substations.</p>
+        </div>
+    </section>
+
+    <section id="funding" class="hidden">
+        <h2>Funding & Sponsorship</h2>
+        <p>Our research and hardware implementation require specialized equipment. We are actively seeking donations, academic grants, and corporate sponsorships to take this prototype to the next level of industrial testing.</p>
+        
+        <div class="grid-container">
+            <div class="card" style="border-color: var(--accent-color);">
+                <h3>Why Sponsor Us?</h3>
+                <ul style="margin-left: 1.5rem; margin-top: 1rem;">
+                    <li><strong>Hardware Costs:</strong> Funding Artix-7 FPGA boards, 10-bit ADCs, and high-voltage testing environments.</li>
+                    <li><strong>Open-Source Contribution:</strong> Your support helps keep this critical grid-safety research transparent and accessible.</li>
+                    <li><strong>Innovation:</strong> Support the next generation of embedded systems engineers in bridging digital logic and analog realities.</li>
+                </ul>
+                <div style="margin-top: 2rem; text-align: center;">
+                    <a href="#contact" class="btn">Become a Sponsor</a>
+                </div>
             </div>
         </div>
     </section>
@@ -266,8 +408,34 @@
         <div class="team-category">Project Guides</div>
         <ul class="team-list">
             <li>Prof. Priya Deshpande</li>
-
         </ul>
+    </section>
+
+    <section id="contact" class="hidden">
+        <h2>Contact Us</h2>
+        <p>Interested in our research, looking to sponsor, or want to collaborate? Reach out to our team.</p>
+        
+        <div class="card" style="max-width: 700px; margin: 2rem auto 0;">
+            <form onsubmit="event.preventDefault(); alert('Message feature coming soon!');">
+                <div class="form-group">
+                    <label for="name">Name / Organization</label>
+                    <input type="text" id="name" class="form-control" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject (e.g., Sponsorship, Research Inquiry)</label>
+                    <input type="text" id="subject" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" class="form-control" placeholder="How can we work together?" required></textarea>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Send Message</button>
+            </form>
+        </div>
     </section>
 
     <footer>
@@ -286,13 +454,10 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('show');
-                    // Optional: Stop observing once revealed to keep it visible
-                    // observer.unobserve(entry.target);
                 }
             });
         }, observerOptions);
 
-        // Target all elements with the 'hidden' class
         const hiddenElements = document.querySelectorAll('.hidden');
         hiddenElements.forEach((el) => observer.observe(el));
     </script>
